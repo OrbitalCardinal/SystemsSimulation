@@ -1,0 +1,128 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[top=30mm, bottom=40mm, left=15mm, right=15mm]{geometry}
+\usepackage{color}
+\usepackage{subfig}
+\usepackage{float}
+ 
+\definecolor{codeblue}{RGB}{0,128,255}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{pink}{RGB}{255,26,117}
+\definecolor{backcolour}{rgb}{1,1,1}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codeblue},
+    keywordstyle=\color{pink},
+    numberstyle=\tiny\color{codeblue},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=7pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\setlength{\parskip}{2mm}
+\setlength{\parindent}{0pt}
+
+\author{Edson Raúl Cepeda Márquez}
+\title{Modelo de urnas}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Objetivo}
+El objetivo principal de esta práctica es hacer uso del paralelismo para analizar y comparar los tiempos de ejecución de una simulación de un fenómeno de coalescencia y fragmentación en el que se implementa un modelo de urnas y se varían sus parámetros. Se hace uso del código escrito en el lenguaje de programación R \cite{r} así como también el material de apoyo disponible en la página \cite{satu} de la Dra. Elisa Schaffer.
+
+\section{Desarrollo}
+Para fines de comparación se hace una implementación sin paralelismo de las variaciones en el número total de partículas $n$ y el tamaño de los cúmulos existentes $k$.
+Primero se encapsula el bloque de código para su uso posterior.
+\lstinputlisting[language= R, firstline=1, lastline=1]{P8.R}
+A esta función se le pasan los parametros que varian $n$ y $k$.
+Para eso se realizan dos ciclos en los cuales estas dos cantidades varían en un rango y además se incluye un ciclo extra de réplicas del experimento para su posterior analísis.
+Los tiempos se toman con la funcion $system.time$ y se guarda en un vector de nombre $tiemposSP$ que hace referencia a el tiempo que toma el código sin paralelización.
+\lstinputlisting[language= R, firstline=114, lastline=126]{P8.R}
+Ahora se procede a hacer la implementación paralela.
+Se usa la función encapsulada previamente y se ejecuta de manera paralela. 
+Los ciclos de la variación de el número total de partículas $n$ y el número de cúmulos existentes $k$ permanecen puesto que en esta implementación se requiere comparar con las mismas variaciones.
+El número de réplicas se especifica dentro de la función que ejecuta en paralelo.
+Los resultados se guardan en un vector de nombre $tiemposCP$ que hace referencia al tiempo que toma el código ejecutando en paralelo.
+\lstinputlisting[language= R, firstline=128, lastline=139]{P8.R}
+
+Se procede a realizar una prueba estadística para comprobar que los resultados del experimento sean significativos.
+Se elige la prueba de suma de rangos Wilcoxon  pues esta prueba no paramétrica permite comparar dos muestras en busca de significancia.
+El resultado de aplicar esta prueba estadística a las dos muestras que son los vectores $tiemposSP$ y $tiemposCP$ regresa un valor $p$ el cual es comparado con un valor alfa de significancia.
+\lstinputlisting[language= R, firstline=142, lastline=143]{P8.R}
+\section{Resultados y conclusiones}
+En la figura \ref{g1} se puede observar como aumenta el tiempo respecto a la cantidad de cúmulos y al número total de partículas.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 160mm]{SP.eps}
+\caption{Implementación no paralela de los tiempos de ejecución respecto a $k$ y $n$}
+\label{g1}
+\end{figure}
+Con esto se puede afirmar que en efecto, si estas dos cantidades incrementan, también el tiempo de ejecución lo hace. 
+En la figura \ref{g2} se puede observar como los tiempos de ejecución disminuyen, esto se debe a que esta es la implementación paralela y fue ejecutada usando tres núcleos del procesador.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 160mm]{CP.eps}
+\caption{Implementación paralela de los tiempos de ejecución respecto a $k$ y $n$}
+\label{g2}
+\end{figure}
+Respecto a la prueba estadística de suma de rangos de Wilcoxon, esta regresa un valor $p$ de $0.02833$ el cual es menor al valor alfa de significancia de $0.05$ y esto nos dice que en efecto, existe una diferencia significativa entre la primera muestra que son los tiempos sin usar el paralelismo respecto a la otra muestra que son los tiempos cuando si se usa el paralelismo.
+Con una diferencia media de 1.8 segundos en el tiempo de ejecución de ambas implementaciones y con una significancia notable mostrada por la prueba estadística, se afirma que la versión paralela es más rápida que la versión sin usar el paralelismo.
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{r} 
+R:  R Project, 2019
+\\\texttt{https://www.r-project.org/}
+
+\bibitem{satu} 
+Satu Elisa Schaeffer: Práctica 8: modelo de urnas , 2019
+\\\texttt{https://elisa.dyndns-web.com/teaching/comp/par/p8.html}
+
+
+
+\end{thebibliography}
+
+
+
+
+
+
+
+
+
+
+\end{document}

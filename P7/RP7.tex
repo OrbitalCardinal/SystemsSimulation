@@ -1,0 +1,132 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[top=30mm, bottom=40mm, left=15mm, right=15mm]{geometry}
+\usepackage{color}
+\usepackage{subfig}
+\usepackage{float}
+ 
+\definecolor{codeblue}{RGB}{0,128,255}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{pink}{RGB}{255,26,117}
+\definecolor{backcolour}{rgb}{1,1,1}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codeblue},
+    keywordstyle=\color{pink},
+    numberstyle=\tiny\color{codeblue},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=7pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\setlength{\parskip}{2mm}
+\setlength{\parindent}{0pt}
+
+\author{Edson Raúl Cepeda Márquez}
+\title{Búsqueda local}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Objetivo}
+El objetivo principal de esta práctica es buscar los máximos locales de una función mediante un modelo de comparación de vecinos, también se visualiza como proceden 15 replicas del experimento. En esta práctica se hace uso del material de apoyo y del código escrito en el lenguaje de programación R \cite{r} disponible en la página \cite{satu} de la Dra. Elisa Schaeffer.
+
+\section{Desarrollo}
+La búsqueda local del máximo de la función consiste en generar distintos vecinos alrededor de un punto inicial aleatorio sobre la función, se compara cual de los vecinos del punto es el más cercano a un valor máximo de la función y se cambia de posición.
+Este se sigue reemplazando con valores cada vez más cercanos al máximo lo que garantiza que en un determinado paso se alcance el máximo verdadero de la función. 
+Para conseguir esto primero se modifica la búsqueda local en el código para encontrar máximos.
+Para esto se invierten los valores limite superiores e inferiores de la función.
+\lstinputlisting[language = R, firstline = 1, lastline = 5]{P7.R}
+Se establece un número máximo de pasos y se establece la magnitud con la que estos avanzan.
+\lstinputlisting[language = R, firstline = 7, lastline = 8]{P7.R}
+Se especifica el número de réplicas del experimento y se genera una posición aleatoria entre los valores limites de la función, así se empieza la búsqueda siempre dentro de la función.
+\lstinputlisting[language = R, firstline = 9, lastline = 11]{P7.R}
+La variable $best$ sirve para reemplazar los mejores valores en cada iteración y así avanzar hacia el máximo de la función.
+Seguido se itera el número de pasos antes establecido y se genera un cambio en la primera posición.
+\lstinputlisting[language = R, firstline = 12, lastline = 14]{P7.R}
+La variable $vecinos$ sirve para guardar cada uno de los vecinos a comparar en próximas iteraciones.
+Se procede a hacer el cambio de posición sobre cada uno de sus vecinos y se establecen como condición que no rebasen ni estén por debajo de los valores 3 y -3.
+\lstinputlisting[language = R, firstline = 15, lastline = 25]{P7.R}
+Ahora se compara los vecinos para encontrar el mejor y cambiar la posición sobre la función.
+\lstinputlisting[language = R, firstline = 26, lastline = 30]{P7.R}
+Por último se realizan las visualizaciones como gráficas de proyección plana.
+Se seleccionan tres réplicas en las que la posición inicial es favorable para su comparación y se generan las gráficas cada cinco pasos hasta llegar al máximo.
+El resto de las replicas pueden ser encontradas en forma de GIF en el repositorio \cite{edson} de este mismo documento.
+
+\section{Resultados y conclusiones}
+En estas proyecciones las zonas rojas representan los valores mínimos de la función y las zonas amarillas representan los valores máximos de la función.
+El punto de color azul con blanco es una representación de como avanza la búsqueda hacia el máximo de la función.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 187 mm]{rep2.png}
+\caption{Búsqueda local de máximos en replica dos}
+\label{g1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 187 mm]{rep8.png}
+\caption{Búsqueda local de máximos en replica ocho}
+\label{g2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 187 mm]{rep13.png}
+\caption{Búsqueda local de máximos en replica 13}
+\label{g3}
+\end{figure}
+
+Como se puede observar cada una de las réplicas llegan al mismo punto máximo.
+Lo que es importante destacar es que las réplicas llegan al punto máximo en un distinto número de pasos, esto se debe a que ninguna tiene el mismo punto inicial de partida, es decir, puede tomar más o menos pasos en llegar al máximo dependiendo de donde sea la posición inicial sobre la función.
+También es importante mencionar que muchas de las veces las réplicas alcanzan el punto máximo antes de completar el número de pasos establecido.
+
+
+
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{r} 
+R:  R Project, 2019
+\\\texttt{https://www.r-project.org/}
+
+\bibitem{satu} 
+Satu Elisa Schaeffer: Práctica 7: búsqueda local, 2019
+\\\texttt{https://elisa.dyndns-web.com/teaching/comp/par/p7.html}
+
+\bibitem{edson}
+Edson Raúl Cepeda Márquez, P7, 2019
+\\\texttt{https://sourceforge.net/projects/systemssimulation/}
+
+
+
+\end{thebibliography}
+
+
+\end{document}
+

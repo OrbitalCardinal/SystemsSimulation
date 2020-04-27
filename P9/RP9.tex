@@ -1,0 +1,129 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[top=30mm, bottom=40mm, left=15mm, right=15mm]{geometry}
+\usepackage{color}
+\usepackage{subfig}
+\usepackage{float}
+ 
+\definecolor{codeblue}{RGB}{0,128,255}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{pink}{RGB}{255,26,117}
+\definecolor{backcolour}{rgb}{1,1,1}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codeblue},
+    keywordstyle=\color{pink},
+    numberstyle=\tiny\color{codeblue},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=7pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\setlength{\parskip}{2mm}
+\setlength{\parindent}{0pt}
+
+\author{Edson Raúl Cepeda Márquez}
+\title{Interacciones entre partículas}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+El objetivo principal de esta práctica es analizar el comportamiento de las velocidades de un grupo de partículas cuando existen interacciones entre ellas.
+Se estudia el efecto en la velocidad con la que se mueven las partículas cuando la magnitud de su carga influye en sus fuerzas de atracción y repulsión y se le agrega masa a las partículas para estudiar el efecto de la fuerza gravitacional sumada a la fuerza de atracción y repulsión de las cargas.
+Se hace uso del código escrito en el lenguaje de programación R \cite{r} así como el material de apoyo disponible en la página \cite{satu} de la Dra. Elisa Schaeffer.
+
+\section{Desarrollo}
+Se selecciona las partes más importantes de código y se procede a modificarlas.
+El primer paso es agregar masa a las partículas, para esto se localiza la sección del código donde se especifican las propiedades de las partículas.
+
+
+Estas se contienen en un dataframe al se le agrega una nueva variable \texttt{m} y se le dan valores aleatorios en un rango de cero a uno.
+\lstinputlisting[language=R,firstline=2, lastline=2]{P9.R}
+Seguido se localiza la sección del código que contiene el cálculo de la fuerza, esto está en la función \texttt{fuerza} y se modifica para que se realiza el calculo correspondiente a la atracción gravitatoria que produce la masa sobre las partículas.
+
+
+Se extraen los valores de la masa de las partículas y se declaran variables para su uso futuro.
+
+
+También se calcula la dirección hacia donde las partículas deberán moverse cuando exista una fuerza de atracción, esto se hace comprobando cual de las cargas es menor con respecto a la otra y apartir del resultado se establece la dirección, se guarda en la nueva variable \texttt{dirm}.
+
+
+Se le agrega una nueva regla que indica que la fuerza de atracción producida por la masa decrece con el cuadrado de su distancia entre ellas y sera igual al producto de las masas entre partículas, esto se hace en la nueva variable \texttt{factorm}.
+Seguido se suman las fuerzas calculadas con las cargas y las fuerzas calculadas con la masa, se obtienen dos nuevas fuerzas totales y se agregan a las nuevas variables \texttt{fxt} y \texttt{fyt}.
+
+\lstinputlisting[language=R,firstline=24, lastline=51]{P9.R}
+
+Para obtener las fuerzas solo con una de las dos cantidades, masa o carga, se separa en dos funciones nuevas estas son \texttt{fuerzam} y \texttt{fuerzac}, a las cuales se les retira la parte del código que no corresponde al cálculo de la fuerza de esa cantidad.
+\lstinputlisting[language=R,firstline=54, lastline=54]{P9.R}
+\lstinputlisting[language=R,firstline=81, lastline=81]{P9.R}
+
+A continuación se ejecuta en paralelo el calculo de todas las fuerzas y se guardan en distintos vectores para su graficación posterior.
+
+Esto se hace 100 veces, lo cual se refiere a que las partículas dan 100 pasos en la simulación.
+\lstinputlisting[language=R,firstline=114, lastline=130]{P9.R}
+
+Como se pretende comparar como se comporta la velocidad cuando se introduce la masa y también la carga, se realiza una gráfica en la cual se puede visualizar los tres resultados al mismo tiempo.
+
+\section{Conclusiones y resultados}
+En la figura \ref{g1} se observa como se comporta la velocidad con la masa, la carga y con ambas.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 180mm]{g1.png}
+\caption{Gráfica de las velocidades de las partículas con masa, carga y ambas}
+\label{g1}
+\end{figure}
+
+En conclusión, cuando se agrega masa a las partículas el rango de velocidad con la que se atraen es mayor puesto que ahora se tienen dos fuerzas influyendo sobre las partículas.
+A su vez la velocidad con la que la masa afecta a las partículas incrementa cuando estan más cercas , esto se traduce a un efecto aglutinante por cada paso y se puede observar conforme los pasos son cercanos a 100 los valores de la velocidad con la masa suben rápidamente.
+Como resultado se obtiene el mismo efecto aglutinante de la atracción gravitatoria sumado a las fuerzas de atracción y repulsión de las cargas.
+
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{r} 
+R:  R Project, 2019
+\\\texttt{https://www.r-project.org/}
+
+\bibitem{satu} 
+Satu Elisa Schaeffer: Práctica 9: interacciones entre partículas, 2019
+\\\texttt{https://elisa.dyndns-web.com/teaching/comp/par/p9.html}
+
+
+
+\end{thebibliography}
+
+
+
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,172 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[top=30mm, bottom=40mm, left=15mm, right=15mm]{geometry}
+\usepackage{color}
+\usepackage{subfig}
+\usepackage{float}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1,1,1}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=7pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\setlength{\parskip}{2mm}
+\setlength{\parindent}{0pt}
+
+\author{Edson Raúl Cepeda Márquez}
+\title{Teoría de colas}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Objetivo}
+El objetivo principal de esta practica es examinar el ordenamiento de trabajos, y analizar los tiempos de ejecución cuando se varia la cantidad de núcleos asignados al cluster. Se paraleliza la tarea de calcular numero primos y no primos para así poder analizar los tiempos de ejecución dependiendo de la proporción y la magnitud de los números primos y no primos.
+Se hace uso de un archivo descargado que contiene numero primos, así como también el código escrito en el lenguaje de programación R \cite{r} y el material didáctico de apoyo, todo esto disponible en la pagina de la Dra. Elisa Schaeffer \cite{satu}.
+
+Como cualquier experimento este se repetirá un determinado numero de veces para poder comparar entre replicas y visualizar los resultados.
+
+\section{Desarrollo}
+Para comenzar es necesario descargar el archivo que contiene los números primos, hay tener en cuenta la potencia del computador en la que se este ejecutando este código puesto que puede llegar a ser un tanto pesado. Ejecutar las funciones del cálculo de números primos con cantidades grandes de números o magnitudes muy elevadas pueden costar más al computador, sobre todo si no se cuenta un cantidad considerable de núcleos para la paralelización de esta tarea.
+
+Primero se leen y se extraen los números del archivo y se acomodan en un arreglo:
+
+\lstinputlisting[language = R,firstline= 3, lastline=4]{P3.R}
+
+Se procede a colocar los números dentro de un vector:
+
+\lstinputlisting[language = R,firstline= 6, lastline=13]{P3.R}
+
+Cabe recalcar que estaremos calculando números primos y no primos en un rango aproximado de 10,000 números. A continuación se realiza la separación y creamos dos vectores para diferenciar cuales son números primos y cuales no lo son:
+
+\lstinputlisting[language = R,firstline= 31, lastline=43]{P3.R}
+
+En la siguiente linea de código se adecua el vector de los números no primos para que tenga la misma longitud que el vector de números primos:
+
+\lstinputlisting[language = R,firstline= 46, lastline=47]{P3.R}
+
+Como se quiere analizar la proporción y la magnitud de los números primos y no primos a la vez que examinamos los tiempos de ejecución al variar el numero de núcleos asignados al cluster, creamos 3 nuevos vectores en los cuales se reparten los números primos y no primos que anteriormente se habían calculado, y se asignan proporciones en base a la cantidad de números primos:
+
+\lstinputlisting[language = R,firstline= 48, lastline=68]{P3.R}
+
+Las proporciones varían de manera que queda un vector con la mitad de números primos, otro con un cuarto de los números primos, y otro con tres cuartos de los números primos.
+También se establecen los rangos para cada una de las proporciones colocándolos en los vectores que posteriormente serán evaluados, el resto serán numeros no primos:
+
+\lstinputlisting[language = R,firstline= 70, lastline=80]{P3.R}
+
+Se establecen el numero de núcleos a usar en este caso son 4 núcleos pero se resta uno para dejar ese núcleo libre para el sistema operativo y evitar inconvenientes a la hora de ejecutar el código:
+
+\lstinputlisting[language = R,firstline= 121, lastline=121]{P3.R}
+
+También se establece el número de replicas del experimento:
+
+\lstinputlisting[language = R,firstline= 122, lastline=122]{P3.R}
+
+Empiezan los ciclos y a continuación se hace uso de una serie de comparaciones para detectar la cantidad de núcleos que esta usada en el momento de la iteración, para posterior mente guardar los datos en variables con nombres que ayudan a identificar a que grupo pertenecen y que resultaron de evaluar el rango de números dependiendo de su proporción:
+
+\lstinputlisting[language = R,firstline= 124, lastline=164]{P3.R}
+
+Se guardan cada uno de los datos resultantes en tres nuevos arreglos, los cuales contendrán cada uno de los tiempos de ejecución, para cada uno de los núcleos.
+Estos tres arreglos representaran los resultados de medir estas cantidades para las tres proporciones de números primos antes mencionadas.
+
+Finalmente se acomodan los datos de estos últimos arreglos de manera que puedan ser graficados.
+
+\lstinputlisting[language = R,firstline= 260, lastline=262]{P3.R}
+
+\section{Resultados y conclusiones}
+
+Ahora se tiene manera de visualizar los datos y examinar los resultados.
+
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 120mm]{Prob1}
+\caption{Tiempo total de ejecución dependiendo del orden del arreglo y la cantidad de núcleos para una proporción de 1/4.}
+\label{g1}
+\end{center}
+\end{figure}
+Como se puede observar para esta proporción \ref{g1} y para los 3 núcleos, los tiempos de ejecución tienen un rango muy parecido, estos vienen desde un poco menos de 2.5 hasta casi alcanzar 3.0 en la mayoría de las replicas, lo que quiere decir que para esta proporción 3/4 de los números que no eran primos estaban ralentizando el calculo y se interponían a la vez que generaban un retraso, pues estos ocupaban la mayor parte del arreglo y la función seguía evaluando hasta comprobar si era primo o no.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 120mm]{Prob2}
+\caption{Tiempo total de ejecución dependiendo del orden del arreglo y la cantidad de núcleos para una proporción de 1/2.}
+\label{g2}
+\end{center}
+\end{figure}
+Con una proporción de 1/2 \ref{g2} podemos notar que las medias de los datos comparando con cada uno de los núcleos están más alejadas entre si y los tiempos de ejecución han disminuido. Al momento de evaluar el arreglo que contenía mitad números primos mitad no primo, la función estaba constantemente regresando los valores y no demoraba en los cálculos pues la cantidad estaba repartida de manera de numero estaba repartida uniformemente.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 120mm]{Prob3}
+\caption{Tiempo total de ejecución dependiendo del orden del arreglo y la cantidad de núcleos para una proporción de 3/4.}
+\label{g3}
+\end{center}
+\end{figure}
+
+En esta ultima gráfica \ref{g3} podemos observar que los tiempos de ejecución bajan aún más y se han alejado más las medias de los conjuntos de datos.
+Para la proporción 3/4 se observa que los resultados de las evaluaciones son más dinámicos que antes lo que se puede explicar a que existe una mayor cantidad de números primos dentro del arreglo evaluado.
+
+Con esto se puede concluir que el numero de núcleos afecta de manera significativa en los tiempos de ejecución, pero hay que encontrar una cantidad adecuada de núcleos para usar  para que los tiempos sean óptimos.
+Las proporciones de números primos y no primos dentro de los arreglos afecta a la hora del cálculo, que exista relleno en los arreglos puede ralentizar los tiempos así como que haya una cantidad mayor de números primos que pueden ser fácilmente deducibles, agiliza los tiempos.
+Por ultimo la cantidad que menos influye en los tiempos es el orden de los números en el arreglo pues se mantiene muy similar la media de los datos.
+
+\medskip
+
+\begin{thebibliography}{9}
+
+\bibitem{r} 
+R:  R Project, 2019
+\\\texttt{https://www.r-project.org/}
+
+\bibitem{satu} 
+Satu Elisa Schaeffer: Práctica 2: autómata celular, 2019
+\\\texttt{https://elisa.dyndns-web.com/teaching/comp/par/p2.html}
+
+\bibitem{jr} 
+Jorge Armando Serna Mendoza:Teoría de Colas, 2019
+\\\texttt{https://sourceforge.net/projects/simulacionenr/files/P3/}
+
+
+\end{thebibliography}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+\end{document}
